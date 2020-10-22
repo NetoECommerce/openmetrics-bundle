@@ -1,0 +1,10 @@
+services:
+  neto_openmetrics.collector_registry:
+    class: Prometheus\CollectorRegistry
+    arguments:
+      - "@neto_openmetrics.adaptor"
+
+  Neto\OpenmetricsBundle\Controller\MetricsController:
+    class: Neto\OpenmetricsBundle\Controller\MetricsController
+    arguments:
+      - "@neto_openmetrics.collector_registry"

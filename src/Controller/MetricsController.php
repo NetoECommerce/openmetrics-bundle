@@ -8,20 +8,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MetricsController
 {
-    /**
-     * @var CollectorRegistry
-     */
-    private $collectionRegistry;
+    /** @var CollectorRegistry */
+    private $collectorRegistry;
 
-    public function __construct(CollectorRegistry $collectionRegistry)
+    public function __construct(CollectorRegistry $collectorRegistry)
     {
-        $this->collectionRegistry = $collectionRegistry;
+        $this->collectorRegistry = $collectorRegistry;
     }
 
     public function index(): Response
     {
         $renderer = new RenderTextFormat();
-        $metrics = $this->collectionRegistry->getMetricFamilySamples();
+        $metrics = $this->collectorRegistry->getMetricFamilySamples();
 
         return new Response(
             $renderer->render($metrics),
