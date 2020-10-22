@@ -1,0 +1,3 @@
+prometheus_metrics:
+  path: /metrics
+  controller: Neto\OpenmetricsBundle\Controller\MetricsController::index

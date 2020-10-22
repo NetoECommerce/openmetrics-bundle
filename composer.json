@@ -1,0 +1,30 @@
+{
+    "name": "netolabs/openmetrics-bundle",
+    "description": "Symfony bundle for exporting application telemetry from your application to Prometheus",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ben Plunkett",
+            "email": "ben.plunkett@neto.com.au"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^7.1",
+        "symfony/http-kernel": "^3.4|^4.0|^5.0",
+        "symfony/dependency-injection": "^3.4|^4.0|^5.0",
+        "symfony/config": "^3.4|^4.0|^5.0",
+        "endclothing/prometheus_client_php": "^1.0"
+    },
+    "suggest": {
+        "ext-apcu": "Required if using APCu as prometheus metrics backend",
+        "ext-redis": "Required if using Redis as prometheus metrics backend",
+        "symfony/stopwatch": "Required if you want to measure request duration"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neto\\OpenmetricsBundle\\": "src/"
+        }
+    }
+}
