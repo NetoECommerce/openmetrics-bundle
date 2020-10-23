@@ -9,7 +9,7 @@ Download the bundle
 composer require netolabs/openmetrics-bundle
 ```
 
-Add the bundle to your AppKernel
+Add the bundle to your AppKernel.php
 
 ```php
 class AppKernel extends Kernel
@@ -22,4 +22,20 @@ class AppKernel extends Kernel
         );
     }
 }
+```
+
+Add the configuration to config.yml
+
+```yaml
+neto_openmetrics:
+    namespace: neto_ecommerce
+    ignored_routes: []
+```
+
+Add the routes.yml for your /metrics endpoint
+
+```yaml
+neto_openmetrics:
+    resource: '@NetoOpenmetricsBundle/Resources/config/routes.yml'
+    prefix: /
 ```

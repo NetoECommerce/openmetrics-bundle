@@ -9,8 +9,8 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('neto_openmetrics');
-        $rootNode = $treeBuilder->getRootNode();
+        $treeBuilder = new TreeBuilder(NetoOpenmetricsExtension::CONFIG_ROOT_KEY);
+        $rootNode = $this->getRootNode($treeBuilder, NetoOpenmetricsExtension::CONFIG_ROOT_KEY);
 
         $supportedTypes = ['in_memory', 'apcu', 'redis'];
 
@@ -20,34 +20,6 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
-                ->scalarNode('type')
-                    ->validate()
-                        ->ifNotInArray($supportedTypes)
-                        ->thenInvalid('The type %s is not supported. Please choose one of '.implode(', ', $supportedTypes))
-                    ->end()
-                    ->defaultValue('in_memory')
-                    ->cannotBeEmpty()
-                ->end()
-                ->arrayNode('redis')
-                    ->children()
-                        ->scalarNode('host')->end()
-                        ->integerNode('port')
-                            ->defaultValue(6379)
-                        ->end()
-                        ->floatNode('timeout')->end()
-                        ->floatNode('read_timeout')
-                            ->validate()
-                                ->always()
-                                // here we force casting `float` to `string` to avoid TypeError when working with Redis
-                                // see for more details: https://github.com/phpredis/phpredis/issues/1538
-                                ->then(function ($v) { return (string) $v; })
-                            ->end()
-                        ->end()
-                        ->booleanNode('persistent_connections')->end()
-                        ->scalarNode('password')->end()
-                        ->integerNode('database')->end()
-                    ->end()
-                ->end()
                 ->arrayNode('ignored_routes')
                     ->prototype('scalar')->end()
                     ->defaultValue(['prometheus_metrics'])
@@ -55,5 +27,15 @@ class Configuration implements ConfigurationInterface
             ->end();
 
         return $treeBuilder;
+    }
+
+    private function getRootNode(TreeBuilder $treeBuilder, $name)
+    {
+        // BC layer for symfony/config 4.1 and older
+        if (!\method_exists($treeBuilder, 'getRootNode')) {
+            return $treeBuilder->root($name);
+        }
+
+        return $treeBuilder->getRootNode();
     }
 }

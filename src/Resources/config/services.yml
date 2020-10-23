@@ -1,4 +1,7 @@
 services:
+  neto_openmetrics.adaptor:
+    class: Prometheus\Storage\APC
+
   neto_openmetrics.collector_registry:
     class: Prometheus\CollectorRegistry
     arguments:
