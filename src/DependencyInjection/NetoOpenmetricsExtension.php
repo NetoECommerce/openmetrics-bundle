@@ -18,5 +18,8 @@ class NetoOpenmetricsExtension extends Extension
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+
+        $container->setParameter(self::CONFIG_ROOT_KEY . '.namespace', $config['namespace']);
+        $container->setParameter(self::CONFIG_ROOT_KEY . '.ignored_routes', $config['ignored_routes']);
     }
 }

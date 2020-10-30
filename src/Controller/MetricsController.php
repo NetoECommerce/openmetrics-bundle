@@ -24,6 +24,7 @@ class MetricsController
         return new Response(
             $renderer->render($metrics),
             200,
-            ['Content-type' => RenderTextFormat::MIME_TYPE]);
+            [ 'Content-type' => RenderTextFormat::MIME_TYPE ]
+        );
     }
 }

@@ -12,8 +12,6 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder(NetoOpenmetricsExtension::CONFIG_ROOT_KEY);
         $rootNode = $this->getRootNode($treeBuilder, NetoOpenmetricsExtension::CONFIG_ROOT_KEY);
 
-        $supportedTypes = ['in_memory', 'apcu', 'redis'];
-
         $rootNode
             ->children()
                 ->scalarNode('namespace')
@@ -22,7 +20,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('ignored_routes')
                     ->prototype('scalar')->end()
-                    ->defaultValue(['prometheus_metrics'])
+                    ->defaultValue([ 'neto_openmetrics' ])
                 ->end()
             ->end();
 

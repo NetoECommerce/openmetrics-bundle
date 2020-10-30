@@ -1,8 +1,15 @@
 services:
+  neto_openmetrics.collector:
+    public: true
+    class: Neto\OpenmetricsBundle\Metrics\PrometheusCollector
+    arguments:
+      - "%neto_openmetrics.namespace%"
+      - "@Prometheus\\CollectorRegistry"
+
   neto_openmetrics.adaptor:
     class: Prometheus\Storage\APC
 
-  neto_openmetrics.collector_registry:
+  Prometheus\CollectorRegistry:
     class: Prometheus\CollectorRegistry
     arguments:
       - "@neto_openmetrics.adaptor"
@@ -10,4 +17,12 @@ services:
   Neto\OpenmetricsBundle\Controller\MetricsController:
     class: Neto\OpenmetricsBundle\Controller\MetricsController
     arguments:
-      - "@neto_openmetrics.collector_registry"
+      - "@Prometheus\\CollectorRegistry"
+
+  Neto\OpenmetricsBundle\Event\KernelEventListener:
+    class: Neto\OpenmetricsBundle\Event\KernelEventListener
+    arguments:
+      - "@neto_openmetrics.collector"
+      - "%neto_openmetrics.ignored_routes%"
+    tags:
+      - { name: kernel.event_listener, event: kernel.response }
