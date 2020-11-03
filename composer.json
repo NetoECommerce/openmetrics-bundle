@@ -19,9 +19,6 @@
         "endclothing/prometheus_client_php": "^1.0",
         "doctrine/dbal": "^2.6"
     },
-    "suggest": {
-        "symfony/stopwatch": "Required if you want to measure request duration"
-    },
     "autoload": {
         "psr-4": {
             "Neto\\OpenmetricsBundle\\": "src/"
