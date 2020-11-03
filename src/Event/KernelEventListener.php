@@ -5,6 +5,13 @@ namespace Neto\OpenmetricsBundle\Event;
 use Neto\OpenmetricsBundle\Metrics\MetricsCollectorInterface;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 
+/**
+ * Class KernelEventListener
+ *
+ * Collects application request and error metrics using the request and exception events
+ *
+ * @package Neto\OpenmetricsBundle\Event
+ */
 class KernelEventListener
 {
     /** @var MetricsCollectorInterface */
@@ -19,35 +26,47 @@ class KernelEventListener
         $this->ignoredRoutes = $ignoredRoutes;
     }
 
-    public function onKernelResponse(KernelEvent $event): void
+    /**
+     * Increments the request counter
+     *
+     * @param KernelEvent $event
+     * @return void
+     */
+    public function onKernelRequest(KernelEvent $event): void
     {
-        $request = $event->getRequest();
-        if (
-            !$event->isMasterRequest()
-            || $this->isIgnoredRoute($event)
-            || !in_array($request->getMethod(), [ 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' ])
-        ) {
+        if (!$event->isMasterRequest() || $this->isIgnoredRoute($event)) {
             return;
         }
 
-        $route = 'undefined';
-        if ($request->getMethod() && $request->attributes->get('_route')) {
-            $route = sprintf('%s-%s', $request->getMethod(), $request->attributes->get('_route'));
-        }
+        $this->collector->inc('request_count', 'total request count');
+    }
 
-        $status = $event->getResponse()->getStatusCode();
-        $maskedStatus = 'undefined';
-        if ($status >= 200 && $status <= 500) {
-            $maskedStatus = substr((string)$status, 0, 1) . 'xx';
+    /**
+     * Increments the error count and tags it with the current route
+     *
+     * @param KernelEvent $event
+     * @return void
+     */
+    public function onKernelException(KernelEvent $event) {
+        $request = $event->getRequest();
+        $routeName = $request->getMethod() . '-undefined';
+        if ($request->attributes->get('_route')) {
+            $routeName = sprintf('%s-%s', $request->getMethod(), $request->attributes->get('_route'));
         }
 
         $this->collector->inc(
-            'request_count',
-            'total request count',
-            [ 'route' => $route, 'status' => $maskedStatus ]
+            "error_count",
+            "count of error responses",
+            [ 'route' => $routeName ]
         );
     }
 
+    /**
+     * Returns true if the current route matches a route in the ignored_routes config
+     *
+     * @param KernelEvent $event
+     * @return bool
+     */
     private function isIgnoredRoute(KernelEvent $event)
     {
         $route = $event->getRequest()->attributes->get('_route');
