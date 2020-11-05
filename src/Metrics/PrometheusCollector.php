@@ -20,7 +20,8 @@ class PrometheusCollector implements MetricsCollectorInterface
 
     public function __construct($namespace, CollectorRegistry $collectorRegistry)
     {
-        $this->namespace = $namespace;
+        $this->namespace = str_replace('.', '_', $namespace);
+        $this->namespace = trim($this->namespace, "_ \t\n\r\0\x0B");
         $this->collectorRegistry = $collectorRegistry;
     }
 
